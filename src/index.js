@@ -35,7 +35,8 @@ const Admin = () => {
     const [ text, setText ] = useState( 'ここにテキストが入ります' ); // テキスト
     const [ fontSize, setFontSize ] = useState( 16 );               // 文字サイズ
 
-    // const [ notification, setNotification ] = useState( null );
+    // 状態メッセージ
+    const [ notification, setNotification ] = useState( null );
 
     // 取得した設定値をstateに反映
     useEffect( () => {
@@ -52,74 +53,65 @@ const Admin = () => {
     // 設定項目の登録
     const onClick = () => {
         api.loadPromise.then( () => {
+
+            // 保存開始メッセージを表示
+            addNotification( __( 'Updating settings…', 'otter-blocks' ), 'info' );
+
             const model = new api.models.Settings({
                 'my_gutenberg_admin_plugin_show_flg': showFlg,  // stateの値
                 'my_gutenberg_admin_plugin_text': text,         // stateの値
                 'my_gutenberg_admin_plugin_font_size': fontSize // stateの値
             });
 
+            // option値に保存する
             const save = model.save();
-
-            // const addNotification = ( message, type ) => {
-            //     const notification = store.addNotification({
-            //         message,
-            //         type,
-            //         insert: 'top',
-            //         container: 'bottom-left',
-            //         isMobile: true,
-            //         dismiss: {
-            //             duration: 2000,
-            //             showIcon: true
-            //         },
-            //         dismissable: {
-            //             click: true,
-            //             touch: true
-            //         }
-            //     });
-        
-            //     setNotification( notification );
-            // };
 
             save.success( ( response, status ) => {
                 console.log( response );
                 console.log( status );
-                // const removeNotification = ( message, type ) => {
-                //     setNotification( null );
-                // }
-                // store.removeNotification( notification );
 
-                if ( 'success' === status ) {
-    
-                    // setOptions( state, response[option]);
-    
-                    // setTimeout( () => {
-                    //     addNotification( __( 'Settings saved.', 'otter-blocks' ), 'success' );
-                    //     setAPISaving( false );
-                    // }, 800 );
-                    store.addNotification({
-                        title: "Wonderful!",
-                        message: "teodosii@react-notifications-component",
-                        type: "success",
-                        insert: "top",
-                        container: "top-right",
-                        animationIn: ["animate__animated", "animate__fadeIn"],
-                        animationOut: ["animate__animated", "animate__fadeOut"],
-                        dismiss: {
-                          duration: 5000,
-                          onScreen: true
-                        }
-                      });
+                // メッセージを一旦削除（ボタン連打した時にメッセージが増えないように）
+                // → 効かなくね？
+                store.removeNotification( notification );
+
+                if ( 'success' === status ) {   
+                    setTimeout( () => {
+                        addNotification( __( 'Settings saved.', 'otter-blocks' ), 'success' );
+                    }, 800 );
+                    store.removeNotification( notification );
                 }
-              
             });
+
             save.error( ( response, status ) => {
                 console.log( response );
                 console.log( status );
+                setTimeout( () => {
+					addNotification( __( 'An unknown error occurred.', 'otter-blocks' ), 'danger' );
+					setAPISaving( false );
+				}, 800 );
             });
         });
     };
 
+    const addNotification = ( message, type ) => {
+        const notification = store.addNotification({
+            message,
+            type,
+            insert: 'top',
+            container: 'top-left',
+            isMobile: true,
+            dismiss: {
+                duration: 2000,
+                showIcon: true
+            },
+            dismissable: {
+                click: true,
+                touch: true
+            }
+        });
 
+        setNotification( notification );
+    };
 
     return (
         <div className="wrap">
