@@ -1,6 +1,12 @@
 // 設定画面用スタイル
 import './admin.scss';
 
+import { store } from 'react-notifications-component';
+import ReactNotification from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css';
+
+import { __ } from '@wordpress/i18n';
+
 // renderメソッドのインポート
 import { 
     render,
@@ -29,6 +35,8 @@ const Admin = () => {
     const [ text, setText ] = useState( 'ここにテキストが入ります' ); // テキスト
     const [ fontSize, setFontSize ] = useState( 16 );               // 文字サイズ
 
+    // const [ notification, setNotification ] = useState( null );
+
     // 取得した設定値をstateに反映
     useEffect( () => {
         api.loadPromise.then( () => {
@@ -49,11 +57,60 @@ const Admin = () => {
                 'my_gutenberg_admin_plugin_text': text,         // stateの値
                 'my_gutenberg_admin_plugin_font_size': fontSize // stateの値
             });
+
             const save = model.save();
+
+            // const addNotification = ( message, type ) => {
+            //     const notification = store.addNotification({
+            //         message,
+            //         type,
+            //         insert: 'top',
+            //         container: 'bottom-left',
+            //         isMobile: true,
+            //         dismiss: {
+            //             duration: 2000,
+            //             showIcon: true
+            //         },
+            //         dismissable: {
+            //             click: true,
+            //             touch: true
+            //         }
+            //     });
+        
+            //     setNotification( notification );
+            // };
 
             save.success( ( response, status ) => {
                 console.log( response );
-                console.log( status );  
+                console.log( status );
+                // const removeNotification = ( message, type ) => {
+                //     setNotification( null );
+                // }
+                // store.removeNotification( notification );
+
+                if ( 'success' === status ) {
+    
+                    // setOptions( state, response[option]);
+    
+                    // setTimeout( () => {
+                    //     addNotification( __( 'Settings saved.', 'otter-blocks' ), 'success' );
+                    //     setAPISaving( false );
+                    // }, 800 );
+                    store.addNotification({
+                        title: "Wonderful!",
+                        message: "teodosii@react-notifications-component",
+                        type: "success",
+                        insert: "top",
+                        container: "top-right",
+                        animationIn: ["animate__animated", "animate__fadeIn"],
+                        animationOut: ["animate__animated", "animate__fadeOut"],
+                        dismiss: {
+                          duration: 5000,
+                          onScreen: true
+                        }
+                      });
+                }
+              
             });
             save.error( ( response, status ) => {
                 console.log( response );
@@ -62,8 +119,11 @@ const Admin = () => {
         });
     };
 
+
+
     return (
         <div className="wrap">
+            <ReactNotification />
             <h1>オプション設定</h1>
 
             {/* （追加）各設定項目のコンポーネント */}

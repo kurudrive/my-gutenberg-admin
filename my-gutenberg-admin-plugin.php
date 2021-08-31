@@ -85,9 +85,10 @@ function my_register_settings() {
 add_action( 'init', 'my_register_settings' );
 
 function my_check_size( $value ) {
-	if ( $value > 20 ) {
-		return 10;
-	} else {
-		return $value;
-	}
+	// if ( $value > 20 ) {
+	// 	return 10;
+	// } else {
+	// 	return $value;
+	// }
+	return $value;
 }

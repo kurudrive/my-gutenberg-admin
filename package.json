@@ -5,5 +5,8 @@
   "scripts": {
     "start": "wp-scripts start",
     "build": "wp-scripts build"
+  },
+  "dependencies": {
+    "react-notifications-component": "^3.1.0"
   }
 }
