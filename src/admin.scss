@@ -1,5 +1,9 @@
-// add_options_pageのコールバック関数で出力したdivタグに、適当なスタイルを当ててみる
 #my-gutenberg-admin-plugin {
-    min-height: 300px;
-    border: 3px red solid;
+    h1{
+        margin-bottom: 2em;
+    }
+    .components-base-control {
+        max-width: 400px;
+        margin-bottom: 20px;
+    }
 }
