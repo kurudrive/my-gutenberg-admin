@@ -1,10 +1,12 @@
 // 設定画面用スタイル
 import './admin.scss';
 
+// 保存の通知メッセージの処理に使う React のライブラリ読み込み
 import { store } from 'react-notifications-component';
 import ReactNotification from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css';
 
+// 翻訳処理読み込み
 import { __ } from '@wordpress/i18n';
 
 // renderメソッドのインポート
@@ -19,7 +21,9 @@ import {
     ToggleControl,
     TextControl,
     RangeControl,
-    Button
+    Button,
+    Placeholder,
+    Spinner,
 } from '@wordpress/components';
 
 // APIのインポート
@@ -28,9 +32,12 @@ import api from '@wordpress/api';
 // Adminコンポーネント
 const Admin = () => {
 
-    
     // stateと初期値の宣言
     // const [ stateの変数名, stateを更新する関数名 ] = useState( stateの初期値 );
+
+    // ローディング画面判定用
+    const [ isAPILoaded, setAPILoaded ] = useState( true );
+
     const [ showFlg, setShowFlg ] = useState( true );               // 広告を表示する
     const [ text, setText ] = useState( 'ここにテキストが入ります' ); // テキスト
     const [ fontSize, setFontSize ] = useState( 16 );               // 文字サイズ
@@ -54,7 +61,10 @@ const Admin = () => {
     const onClick = () => {
         api.loadPromise.then( () => {
 
-            // 保存開始メッセージを表示
+            // ローディング画面スタート
+            setAPILoaded( false );
+
+            // 保存開始メッセージを表示（ ↑ でローディング画面になるので ↑ が有効な場合は表示されない ）
             addNotification( __( 'Updating settings…', 'otter-blocks' ), 'info' );
 
             const model = new api.models.Settings({
@@ -79,6 +89,7 @@ const Admin = () => {
                         addNotification( __( 'Settings saved.', 'otter-blocks' ), 'success' );
                     }, 800 );
                     store.removeNotification( notification );
+                    setAPILoaded( true );
                 }
             });
 
@@ -88,11 +99,17 @@ const Admin = () => {
                 setTimeout( () => {
 					addNotification( __( 'An unknown error occurred.', 'otter-blocks' ), 'danger' );
 					setAPISaving( false );
+                    setAPILoaded( true );
 				}, 800 );
             });
         });
     };
 
+    /**
+     * 読み込みメッセージを表示
+     * @param {*} message 
+     * @param {*} type 
+     */
     const addNotification = ( message, type ) => {
         const notification = store.addNotification({
             message,
@@ -112,6 +129,17 @@ const Admin = () => {
 
         setNotification( notification );
     };
+
+    // 読込中にローディング画面を出す（ちょっとださい）
+	if ( ! isAPILoaded ) {
+		return (
+            <div className="wrap">
+			<Placeholder>
+				<Spinner />
+			</Placeholder>
+            </div>
+		);
+	}
 
     return (
         <div className="wrap">
