@@ -22,8 +22,9 @@ import {
     TextControl,
     RangeControl,
     Button,
+    Modal,
     Placeholder,
-    Spinner,
+    Spinner
 } from '@wordpress/components';
 
 // APIのインポート
@@ -45,6 +46,11 @@ const Admin = () => {
     // 状態メッセージ
     const [ notification, setNotification ] = useState( null );
 
+    // モーダルの設定
+    const [ isOpen, setOpen ] = useState( false );
+    const openModal = () => setOpen( true );
+    const closeModal = () => setOpen( false );
+
     // 取得した設定値をstateに反映
     useEffect( () => {
         api.loadPromise.then( () => {
@@ -61,8 +67,8 @@ const Admin = () => {
     const onClick = () => {
         api.loadPromise.then( () => {
 
-            // ローディング画面スタート
-            setAPILoaded( false );
+            // ローディング画面スタート（モーダルを使う仕様だとエラーになるので注意）
+            // setAPILoaded( false );
 
             // 保存開始メッセージを表示（ ↑ でローディング画面になるので ↑ が有効な場合は表示されない ）
             addNotification( __( 'Updating settings…', 'otter-blocks' ), 'info' );
@@ -104,6 +110,11 @@ const Admin = () => {
             });
         });
     };
+
+    // モーダルを閉じて保存
+    const closeModalAndSave = () => {
+        onClick();
+    }
 
     /**
      * 読み込みメッセージを表示
@@ -167,13 +178,33 @@ const Admin = () => {
                 value={ fontSize }
                 onChange={ ( value ) => setFontSize( value ) }
             />
-            {/* （追加）保存ボタン */}
+            {/* 保存ボタン */}
             <Button
                 isPrimary
                 onClick={ onClick }
             >
                 保存
+            </Button> 
+
+            <Button
+                isPrimary
+                onClick={ openModal }
+            >
+                確認つき保存
             </Button>
+            { isOpen && (
+                <Modal title="This is my modal" onRequestClose={ closeModal } className={"myModal"}>
+                    <Button isSecondary onClick={ closeModal }>
+                        キャンセル
+                    </Button>
+                    <Button
+                        isPrimary
+                        onClick={ closeModalAndSave }
+                    >
+                        保存
+                    </Button> 
+                </Modal>
+            ) }
         </div>
     );
 };
