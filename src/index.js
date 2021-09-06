@@ -114,6 +114,7 @@ const Admin = () => {
     // モーダルを閉じて保存
     const closeModalAndSave = () => {
         onClick();
+        closeModal();
     }
 
     /**
