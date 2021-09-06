@@ -45,8 +45,22 @@ function my_admin_scripts( $hook_suffix ) {
 		$asset_file['version'],
 		true // </body>`終了タグの直前でスクリプトを読み込む
 	);
+	// 画面読み込み時に初期値を渡すために localize_script を使っている
+	wp_localize_script( 'my-gutenberg-admin-plugin-script', 'myAdminOptions', apply_filters( 'my_gutenberg_admin_default_options', array() ) );
 }
 add_action( 'admin_enqueue_scripts', 'my_admin_scripts' );
+
+//  画面読み込み時に初期値を渡す
+function my_gutenberg_set_admin_default_options( $options ) {
+	// $options['my_gutenberg_admin_plugin_show_flg']  = get_option( 'my_gutenberg_admin_plugin_show_flg' );
+	// $options['my_gutenberg_admin_plugin_text']      = get_option( 'my_gutenberg_admin_plugin_text' );
+	// $options['my_gutenberg_admin_plugin_font_size'] = get_option( 'my_gutenberg_admin_plugin_font_size' );
+	$options['my_gutenberg_admin_plugin_show_flg']  = false;
+	$options['my_gutenberg_admin_plugin_text']      = '初期';
+	$options['my_gutenberg_admin_plugin_font_size'] = 11;
+	return $options;
+}
+add_filter( 'my_gutenberg_admin_default_options', 'my_gutenberg_set_admin_default_options', 10, 1 );
 
 // 設定項目の登録
 function my_register_settings() {
@@ -86,9 +100,10 @@ add_action( 'init', 'my_register_settings' );
 
 function my_check_size( $value ) {
 	// if ( $value > 20 ) {
-	// 	return 10;
+	// return 10;
 	// } else {
-	// 	return $value;
+	// return $value;
 	// }
 	return $value;
 }
+

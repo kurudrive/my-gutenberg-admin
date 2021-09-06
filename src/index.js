@@ -39,9 +39,10 @@ const Admin = () => {
     // ローディング画面判定用
     const [ isAPILoaded, setAPILoaded ] = useState( true );
 
-    const [ showFlg, setShowFlg ] = useState( true );               // 広告を表示する
-    const [ text, setText ] = useState( 'ここにテキストが入ります' ); // テキスト
-    const [ fontSize, setFontSize ] = useState( 16 );               // 文字サイズ
+    // 画面表示時の初期値を localize_script で受け取っている
+    const [ showFlg, setShowFlg ] = useState( myAdminOptions.my_gutenberg_admin_plugin_show_flg );               // 広告を表示する
+    const [ text, setText ] = useState( myAdminOptions.my_gutenberg_admin_plugin_text ); // テキスト
+    const [ fontSize, setFontSize ] = useState( myAdminOptions.my_gutenberg_admin_plugin_font_size );               // 文字サイズ
 
     // 状態メッセージ
     const [ notification, setNotification ] = useState( null );
