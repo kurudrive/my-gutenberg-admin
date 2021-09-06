@@ -51,12 +51,12 @@ const Admin = () => {
     const openModal = () => setOpen( true );
     const closeModal = () => setOpen( false );
 
-    // 取得した設定値をstateに反映
+    // APIから取得した設定値をstateに反映
     useEffect( () => {
         api.loadPromise.then( () => {
             const model = new api.models.Settings();
             model.fetch().then( response => {
-                setShowFlg( Boolean( response.my_gutenberg_admin_plugin_show_flg ) );
+                setShowFlg( Boolean( response.my_gutenberg_admin_plugin_show_flg ) ); // option値をstateに設定している
                 setText( response.my_gutenberg_admin_plugin_text );
                 setFontSize( response.my_gutenberg_admin_plugin_font_size );
             });
